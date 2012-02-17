@@ -24,12 +24,8 @@ val s = Sakismet("key", "blog")(new nio.Http)
 val f = s.verify_key // f is a Dispatch non-blocking future
 f()
 	
-Sakismet is fully type-safe and functional, containing no mutable state. It uses a type-safe
-builder pattern, leveraging Scala's structural types and generalized type constraints.
+Sakismet is fully type-safe and functional, containing no mutable state. It uses a type-safe builder pattern, leveraging Scala's structural types and generalized type constraints.
 
-The Sakismet runtime is built on Dispatch (http://dispatch.databinder.net/), a pure Scala
-library for conducting HTTP interaction. Sakismet fully supports Dispatch's HttpExecutor API,
-allowing the user to freely switch between the Dispatch blocking and non-blocking
-implementations.
+The Sakismet runtime is built on Dispatch (http://dispatch.databinder.net/), a pure Scala library for conducting HTTP interaction. Sakismet fully supports Dispatch's HttpExecutor API, allowing the user to freely switch between the Dispatch blocking and non-blocking implementations.
 
 Sakismet is built with SBT (https://github.com/harrah/xsbt).
