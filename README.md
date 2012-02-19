@@ -4,6 +4,7 @@ Scala library for Akismet (http://akismet.com/).
 Provides the full Akismet API in pure functional Scala.
 
 Basic usage:
+
 ```scala
 import sakismet._
 
@@ -15,6 +16,7 @@ s.verify_key
 ```
 
 Non-blocking usage for NIO:
+
 ```scala
 import sakismet._
 import dispatch._
