@@ -31,67 +31,83 @@ package object sakismet {
   }
   
   class Builder[H <: HttpExecutor, Xs] private[sakismet](key: String, val inv: Invoker[H]) {
-    self: Builder[H,_] =>
-    type selfXs = Xs
+    self: Builder[H, _] =>
+    type Ev[X] = Xs <:< X
     val params = Map[String, String]()
-    
-    def user_ip(v: String)(implicit ev: Xs <:< { type UserIp <: N }) =
-      new Builder[H, selfXs { type UserIp = S }](key, inv) {
+
+    def user_ip[X <: { type UserIp <: N }: Ev](v: String) =
+      new Builder[H, Xs { type UserIp = S }](key, inv) {
       override val params = self.params + ("user_ip" -> v)
-    }
+    } 
     
-    def referrer(v: String)(implicit ev: Xs <:< { type Referrer <: N }) =
-      new Builder[H, selfXs { type Referrer = S }](key, inv) {
+    def referrer[X <: { type Referrer <: N }: Ev](v: String) =
+      new Builder[H, Xs { type Referrer = S }](key, inv) {
       override val params = self.params + ("referrer" -> v)
     }
-    
-    def permalink(v: String)(implicit ev: Xs <:< { type Permalink <: N }) =
-      new Builder[H, selfXs { type Permalink = S }](key, inv) {
+        
+    def permalink[X <: { type Permalink <: N }: Ev](v: String) =
+      new Builder[H, Xs { type Permalink = S }](key, inv) {
       override val params = self.params + ("permalink" -> v)
     }
     
-    def comment_type(v: String)(implicit ev: Xs <:< { type CommentType <: N }) =
-      new Builder[H, selfXs { type CommentType = S }](key, inv) {
+    def comment_type[X <: { type CommentType <: N }: Ev](v: String) =
+      new Builder[H, Xs { type CommentType = S }](key, inv) {
       override val params = self.params + ("comment_type" -> v)
     }
     
-    def comment_author(v: String)(implicit ev: Xs <:< { type CommentAuthor <: N }) =
-      new Builder[H, selfXs { type CommentAuthor = S }](key, inv) {
+    def comment_author[X <: { type CommentAuthor <: N }: Ev](v: String) =
+      new Builder[H, Xs { type CommentAuthor = S }](key, inv) {
       override val params = self.params + ("comment_author" -> v)
     }
     
-    def comment_author_email(v: String)(implicit ev: Xs <:< { type CommentAuthorEmail <: N }) =
-      new Builder[H, selfXs { type CommentAuthorEmail = S }](key, inv) {
+    def comment_author_email[X <: { type CommentAuthorEmail <: N }: Ev](v: String) =
+      new Builder[H, Xs { type CommentAuthorEmail = S }](key, inv) {
       override val params = self.params + ("comment_author_email" -> v)
     }
     
-    def comment_author_url(v: String)(implicit ev: Xs <:< { type CommentAuthorUrl <: N }) =
-      new Builder[H, selfXs { type CommentAuthorUrl = S }](key, inv) {
+    def comment_author_url[X <: { type CommentAuthorUrl <: N }: Ev](v: String) =
+      new Builder[H, Xs { type CommentAuthorUrl = S }](key, inv) {
       override val params = self.params + ("comment_author_url" -> v)
     }
     
-    def comment_content(v: String)(implicit ev: Xs <:< { type CommentContent <: N }) =
-      new Builder[H, selfXs { type CommentContent = S }](key, inv) {
+    def comment_content[X <: { type CommentContent <: N }: Ev](v: String) =
+      new Builder[H, Xs { type CommentContent = S }](key, inv) {
       override val params = self.params + ("comment_content" -> v)
     }
 
     type AkismetOk = { type UserIp <: S; type Referrer <: S }
     
+    /**
+     * Verify that the given key and blog are recognized by Akismet.
+     * 
+     * @return {@code true} if key is valid, otherwise {@code false}
+     */
     def verify_key() = inv.invoke(None, "verify-key", params + ("key" -> key)) {
       case "valid" => true
       case "invalid" => false
     }
     
-    def comment_check()(implicit ev: Xs <:< AkismetOk) = inv.invoke(key, "comment-check", params) {
+    /**
+     * Check whether Akismet thinks a given comment is spam.
+     * 
+     * @return {@code true} if comment is spam, otherwise {@code false}
+     */
+    def comment_check[X <: AkismetOk: Ev]() = inv.invoke(key, "comment-check", params) {
       case "true" => true
       case "false" => false
     }
     
-    def submit_spam()(implicit ev: Xs <:< AkismetOk) = inv.invoke(key, "submit-spam", params) {
+    /**
+     * Report false negative to Akismet.
+     */
+    def submit_spam[X <: AkismetOk: Ev]() = inv.invoke(key, "submit-spam", params) {
       case "Thanks for making the web a better place." => ()
     }
     
-    def submit_ham()(implicit ev: Xs <:< AkismetOk) = inv.invoke(key, "submit-ham", params) {
+    /**
+     * Report false positive to Akismet.
+     */
+    def submit_ham[X <: AkismetOk: Ev]() = inv.invoke(key, "submit-ham", params) {
       case "Thanks for making the web a better place." => ()
     }
     
