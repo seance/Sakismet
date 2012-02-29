@@ -34,46 +34,34 @@ package object sakismet {
     self: Builder[H, _] =>
     type Ev[X] = Xs <:< X
     val params = Map[String, String]()
-
+    
+    private def builder[Xs](mapping: (String, String)) = new Builder[H, Xs](key, inv) {
+      override val params = self.params + mapping
+    }
+    
     def user_ip[X <: { type UserIp <: N }: Ev](v: String) =
-      new Builder[H, Xs { type UserIp = S }](key, inv) {
-      override val params = self.params + ("user_ip" -> v)
-    } 
+      builder[Xs { type UserIp = S }]("user_ip" -> v)
     
     def referrer[X <: { type Referrer <: N }: Ev](v: String) =
-      new Builder[H, Xs { type Referrer = S }](key, inv) {
-      override val params = self.params + ("referrer" -> v)
-    }
+      builder[Xs { type Referrer = S }]("referrer" -> v)
         
     def permalink[X <: { type Permalink <: N }: Ev](v: String) =
-      new Builder[H, Xs { type Permalink = S }](key, inv) {
-      override val params = self.params + ("permalink" -> v)
-    }
+      builder[Xs { type Permalink = S }]("permalink" -> v)
     
     def comment_type[X <: { type CommentType <: N }: Ev](v: String) =
-      new Builder[H, Xs { type CommentType = S }](key, inv) {
-      override val params = self.params + ("comment_type" -> v)
-    }
+      builder[Xs { type CommentType = S }]("comment_type" -> v)
     
     def comment_author[X <: { type CommentAuthor <: N }: Ev](v: String) =
-      new Builder[H, Xs { type CommentAuthor = S }](key, inv) {
-      override val params = self.params + ("comment_author" -> v)
-    }
+      builder[Xs { type CommentAuthor = S }]("comment_author" -> v)
     
     def comment_author_email[X <: { type CommentAuthorEmail <: N }: Ev](v: String) =
-      new Builder[H, Xs { type CommentAuthorEmail = S }](key, inv) {
-      override val params = self.params + ("comment_author_email" -> v)
-    }
+      builder[Xs { type CommentAuthorEmail = S }]("comment_author_email" -> v)
     
     def comment_author_url[X <: { type CommentAuthorUrl <: N }: Ev](v: String) =
-      new Builder[H, Xs { type CommentAuthorUrl = S }](key, inv) {
-      override val params = self.params + ("comment_author_url" -> v)
-    }
+      builder[Xs { type CommentAuthorUrl = S }]("comment_author_url" -> v)
     
     def comment_content[X <: { type CommentContent <: N }: Ev](v: String) =
-      new Builder[H, Xs { type CommentContent = S }](key, inv) {
-      override val params = self.params + ("comment_content" -> v)
-    }
+      builder[Xs { type CommentContent = S }]("comment_content" -> v)
 
     type AkismetOk = { type UserIp <: S; type Referrer <: S }
     
